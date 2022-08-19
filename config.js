@@ -10,11 +10,8 @@ module.exports = {
 	},
 	mail: {
 		credentials: {
-			email: process.env.EMAIL,
-			clientId: process.env.EMAIL_CLIENT_ID,
-			clientSecret: process.env.EMAIL_CLIENT_SECRET,
-			redirectURI: process.env.EMAIL_REDIRECT_URI,
-			refreshToken: process.env.EMAIL_REFRESH_TOKEN,
+			email: process.env.EMAIL_ID,
+			password: process.env.PASSWORD,
 		},
 	},
 	auth: {

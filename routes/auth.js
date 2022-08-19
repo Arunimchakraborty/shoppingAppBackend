@@ -7,6 +7,7 @@ const sendMail = require("../utils/sendMail");
 const config = require("../config");
 const getRandomString = require("../utils/getRandomString");
 const authOnlyMiddleware = require("../middlewares/authOnly");
+const mailer = require("../mailer");
 
 function validatePassword(password) {
 	return !(
@@ -21,12 +22,24 @@ router.post("/register", async (req, res) => {
 
 	// missing details
 	if (!user) return res.status(400).json({ msg: "missing user in body" });
-	if (!(user.username && user.password && user.email))
-		return res.status(400).json({ msg: "missing username, password or email" });
+	if (
+		!(
+			user.password &&
+			user.email &&
+			user.firstName &&
+			user.lastName &&
+			user.phoneNumber
+		)
+	)
+		return res
+			.status(400)
+			.json({
+				msg: "missing password, email, firstname, lastname or phone number",
+			});
 
 	// invalid details
-	if ((await User.find({ username: user.username })).length > 0)
-		return res.status(400).json({ msg: "username is taken" });
+	if ((await User.find({ email: user.email })).length > 0)
+		return res.status(400).json({ msg: "email is taken" });
 	if ((await User.find({ email: user.email })).length > 0)
 		return res.status(400).json({
 			msg: "this email address is already registered with another account",
@@ -49,8 +62,8 @@ router.post("/register", async (req, res) => {
 });
 
 // checking if user exists
-router.get("/exists/:username", async (req, res) => {
-	const foundUsers = await User.find({ username: req.params.username });
+router.get("/exists/:email", async (req, res) => {
+	const foundUsers = await User.find({ email: req.params.email });
 	if (foundUsers.length === 0) return res.json({ exists: false });
 	else
 		return res.json({
@@ -65,11 +78,11 @@ router.post("/login", async (req, res) => {
 
 	// missing details
 	if (!user) return res.status(400).json({ msg: "missing user in body" });
-	if (!(user.username && user.password))
-		return res.status(400).json({ msg: "missing username or password" });
+	if (!(user.email && user.password))
+		return res.status(400).json({ msg: "missing email or password" });
 
 	// looking for user
-	const foundUsers = await User.find({ username: user.username });
+	const foundUsers = await User.find({ email: user.email });
 	if (foundUsers.length === 0)
 		return res.status(404).json({ msg: "user not found" });
 	const foundUser = foundUsers[0];
@@ -140,13 +153,14 @@ router.post("/generate-otp", async (req, res) => {
 		newOTP.save();
 
 		// sending otp
-		const emailBody = `Hello ${foundUser.username}
+		const emailBody = `Hello ${foundUser.email}
 		<hr />
 		Your OTP is <em>${otp}</em>
 		<br />
 		It is valid for 30 min after generation. i.e till ${newOTP.validTill}`;
 
-		await sendMail(foundUser.email, "One Time Password", emailBody);
+		// await sendMail(foundUser.email, "One Time Password", emailBody);
+		mailer(foundUser.email, emailBody, "One Time Password");
 		res.json({ msg: `OTP sent to ${foundUser.email}` });
 	} catch (err) {
 		return res.status(500).json({ msg: "error generating and sending OTP" });

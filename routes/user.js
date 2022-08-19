@@ -16,9 +16,9 @@ router.get("/:id", async (req, res) => {
 	res.json(user);
 });
 
-// get user by username
-router.get("/byusername/:username", async (req, res) => {
-	const user = await User.findOne({ username: req.params.username });
+// get user by email
+router.get("/byemail/:email", async (req, res) => {
+	const user = await User.findOne({ email: req.params.email });
 	if (!user) return res.status(404).json({ msg: "user not found" });
 	res.json(user);
 });
