@@ -7,11 +7,9 @@ const itemSchema = mongoose.Schema({
 	},
 	value: {
 		type: Number,
-		required: true,
 	},
 	unit: {
 		type: String,
-		required: true,
 	},
 });
 
