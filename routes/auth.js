@@ -5,9 +5,10 @@ const Token = require("../models/Token");
 const OTP = require("../models/OTP");
 const sendMail = require("../utils/sendMail");
 const config = require("../config");
-const getRandomString = require("../utils/getRandomString");
+const { getRandomString } = require("../utils/getRandom");
 const authOnlyMiddleware = require("../middlewares/authOnly");
 const mailer = require("../mailer");
+const { getRandomNumber } = require("../utils/getRandom");
 
 function validatePassword(password) {
 	return !(
@@ -31,11 +32,9 @@ router.post("/register", async (req, res) => {
 			user.phoneNumber
 		)
 	)
-		return res
-			.status(400)
-			.json({
-				msg: "missing password, email, firstname, lastname or phone number",
-			});
+		return res.status(400).json({
+			msg: "missing password, email, firstname, lastname or phone number",
+		});
 
 	// invalid details
 	if ((await User.find({ email: user.email })).length > 0)
@@ -145,7 +144,7 @@ router.post("/generate-otp", async (req, res) => {
 
 	// generate otp
 	try {
-		const otp = getRandomString(config.auth.otp.length);
+		const otp = getRandomNumber(config.auth.otp.length);
 		const newOTP = new OTP({
 			value: otp,
 			user: foundUser,

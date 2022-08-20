@@ -1,6 +1,6 @@
 const config = require("../config");
 const Token = require("../models/Token");
-const getRandomString = require("../utils/getRandomString");
+const { getRandomString } = require("../utils/getRandom");
 
 async function tokenMiddleware(req, res, next) {
 	if (req.auth.isAuthenticated) {
