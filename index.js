@@ -4,11 +4,13 @@ const mongoose = require("mongoose");
 const authMiddleware = require("./middlewares/auth");
 const tokenMiddleware = require("./middlewares/token");
 const cleanDB = require("./utils/cleanDB");
+const cors = require("cors");
 
 const app = express();
 
 // middlewares
 app.use(express.json());
+app.use(cors({ exposedHeaders: "token" }));
 
 // custom middlewares
 app.use(authMiddleware);
