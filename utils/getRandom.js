@@ -20,7 +20,7 @@ function getRandomNumber(length) {
 		result += characters.charAt(Math.floor(Math.random() * charactersLength));
 	}
 
-	return parseInt(result);
+	return result;
 }
 
 module.exports = {
