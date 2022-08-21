@@ -17,9 +17,10 @@ router.get("/creator", authOnlyMiddleware([]), async (req, res) => {
 	res.status(200).json(lists);
 });
 
-// get all lists by assigned user
-router.get("/assigned", authOnlyMiddleware([]), async (req, res) => {
-	const lists = await List.find({ assignedTo: req.auth.user });
+// get all lists by assigned family
+router.get("/assigned/:id", authOnlyMiddleware([]), async (req, res) => {
+	const lists = await List.find({ assignedTo: req.params.id });
+	if(!lists) return res.status(404).json({msg : "Family Not Found"})
 	res.status(200).json(lists);
 });
 
@@ -27,7 +28,7 @@ router.get("/assigned", authOnlyMiddleware([]), async (req, res) => {
 router.get("/getlist/:id", authOnlyMiddleware([]), async (req, res) => {
 	if (!req.params.id)
 		return res.status(404).json({ msg: "List ID not found in body" });
-	const list = await List.findById(req.params.id);
+	const list = await List.findById(req.params.id).populate('assignedTo');
 	if (!list) return res.status(404).json({ msg: "List ID not found" });
 	res.status(200).json(list);
 });

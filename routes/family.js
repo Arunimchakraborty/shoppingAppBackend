@@ -14,12 +14,21 @@ router.get("/", authOnlyMiddleware([]), async (req, res) => {
 
 // get family by user
 router.get("/user", authOnlyMiddleware([]), async (req, res) => {
-	const allFamilies = await Family.find({members : req.auth.user});
+	const allFamilies = await Family.find({ members: req.auth.user });
 	res.status(200).json(allFamilies);
 });
 
 // get family by family id
 router.get("/getfamily/:id", authOnlyMiddleware([]), async (req, res) => {
+	if (!req.params.id)
+		return res.status(404).json({ msg: "Family ID not found in body" });
+	const family = await Family.findById(req.params.id).populate("members");
+	if (!family) return res.status(404).json({ msg: "Family not found" });
+	res.status(200).json(family);
+});
+
+// get member IDs by family id
+router.get("/getmembers/:id", authOnlyMiddleware([]), async (req, res) => {
 	if (!req.params.id)
 		return res.status(404).json({ msg: "Family ID not found in body" });
 	const family = await Family.findById(req.params.id);
@@ -45,12 +54,13 @@ router.post("/createFamily/", authOnlyMiddleware([]), async (req, res) => {
 });
 
 //add member to family
-router.post("/addmember/:id", authOnlyMiddleware([]), async (req, res) => {
-	const member = req.body.member;
-	if (!member) return res.status(400).json({ msg: "Member not found in body" });
+router.post("/addmembers/:id", authOnlyMiddleware([]), async (req, res) => {
+	const members = req.body.members;
+	if (!members)
+		return res.status(400).json({ msg: "Member not found in body" });
 	const foundFamily = await Family.findById(req.params.id);
 	if (!foundFamily) return res.status(400).json({ msg: "Family not found" });
-	foundFamily.members.push(member);
+	foundFamily.members = members;
 	try {
 		return res.status(200).send(await foundFamily.save());
 	} catch (error) {
