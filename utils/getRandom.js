@@ -1,7 +1,7 @@
 const characters =
 	"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-const numbers = "0123456789";
+const numbers = "123456789";
 
 function getRandomString(length) {
 	let result = "";

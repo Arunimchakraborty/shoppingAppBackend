@@ -42,7 +42,7 @@ router.patch("/:id", authOnlyMiddleware(["admin"]), async (req, res) => {
 		});
 		res.json(await user.save());
 	} catch (err) {
-		res.status(500).json({ err });
+		res.status(500).json({ msg: err });
 	}
 });
 

@@ -45,7 +45,7 @@ router.post("/register", async (req, res) => {
 		});
 	if (!validatePassword(user.password))
 		return res.status(400).json({
-			err: `password should be between ${config.auth.password.length.min} and ${config.auth.password.length.max} characters`,
+			msg: `password should be between ${config.auth.password.length.min} and ${config.auth.password.length.max} characters`,
 		});
 
 	try {
@@ -56,7 +56,7 @@ router.post("/register", async (req, res) => {
 		const newUser = new User(user);
 		return res.send(await newUser.save());
 	} catch (err) {
-		return res.status(500).json({ err });
+		return res.status(500).json({ msg: err });
 	}
 });
 
@@ -177,7 +177,7 @@ router.post("/reset-password", async (req, res) => {
 
 	if (!validatePassword(password))
 		return res.status(400).json({
-			err: `password should be between ${config.auth.password.length.min} and ${config.auth.password.length.max} characters`,
+			msg: `password should be between ${config.auth.password.length.min} and ${config.auth.password.length.max} characters`,
 		});
 
 	// finding otp
