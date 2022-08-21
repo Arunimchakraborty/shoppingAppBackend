@@ -14,12 +14,8 @@ router.get("/", authOnlyMiddleware([]), async (req, res) => {
 
 // get family by user
 router.get("/user", authOnlyMiddleware([]), async (req, res) => {
-	const allFamilies = await Family.find();
-	let familiesFound = [];
-	allFamilies.map((item, index) => {
-		if (item.members.find((e) => e == req.auth.user)) familiesFound.push(item);
-	});
-	res.status(200).json(familiesFound);
+	const allFamilies = await Family.find({members : req.auth.user});
+	res.status(200).json(allFamilies);
 });
 
 // get family by family id
@@ -34,10 +30,12 @@ router.get("/getfamily/:id", authOnlyMiddleware([]), async (req, res) => {
 //create new Family
 router.post("/createFamily/", authOnlyMiddleware([]), async (req, res) => {
 	const name = req.body.name;
-	if (!name) return res.status(400).json({ msg: "Name not found in body" });
+	const members = req.body.members;
+	if (!name && !members)
+		return res.status(400).json({ msg: "Name or members not found in body" });
 	const newFamily = new Family({
 		name: name,
-		members: [req.auth.user],
+		members: [req.auth.user, ...members],
 	});
 	try {
 		return res.status(200).send(await newFamily.save());
