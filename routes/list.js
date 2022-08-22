@@ -28,7 +28,9 @@ router.get("/assigned/:id", authOnlyMiddleware([]), async (req, res) => {
 router.get("/getlist/:id", authOnlyMiddleware([]), async (req, res) => {
 	if (!req.params.id)
 		return res.status(404).json({ msg: "List ID not found in body" });
-	const list = await List.findById(req.params.id).populate('assignedTo');
+	const list = await List.findById(req.params.id)
+		.populate('assignedTo')
+		.populate('creator')
 	if (!list) return res.status(404).json({ msg: "List ID not found" });
 	res.status(200).json(list);
 });
