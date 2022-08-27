@@ -27,6 +27,7 @@ app.use("/auth/", require("./routes/auth"));
 app.use("/user/", require("./routes/user"));
 app.use("/list/", require("./routes/list"));
 app.use("/family/", require("./routes/family"));
+app.use("/", require('./routes/test'))
 
 app.listen(config.server.port, "0.0.0.0", () => {
 	console.log(`server live on port ${config.server.port}`);

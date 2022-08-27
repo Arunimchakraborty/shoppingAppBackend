@@ -53,13 +53,14 @@ router.post("/createFamily/", authOnlyMiddleware([]), async (req, res) => {
 	}
 });
 
-//add member to family
-router.post("/addmembers/:id", authOnlyMiddleware([]), async (req, res) => {
+//patch family
+router.post("/patchfamily/:id", authOnlyMiddleware([]), async (req, res) => {
 	const members = req.body.members;
 	if (!members)
 		return res.status(400).json({ msg: "Member not found in body" });
 	const foundFamily = await Family.findById(req.params.id);
 	if (!foundFamily) return res.status(400).json({ msg: "Family not found" });
+	if(req.auth.user != foundFamily.creator) return res.status(400).json({msg : "You must be creator of the family to patch family"})
 	foundFamily.members = members;
 	try {
 		return res.status(200).send(await foundFamily.save());
