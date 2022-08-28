@@ -60,6 +60,7 @@ router.post("/patchfamily/:id", authOnlyMiddleware([]), async (req, res) => {
 	if (!members)
 		return res.status(400).json({ msg: "Member not found in body" });
 	const foundFamily = await Family.findById(req.params.id).populate("creator");
+	console.log({family : foundFamily})
 	if (!foundFamily) return res.status(400).json({ msg: "Family not found" });
 	if (JSON.stringify(req.auth.user) != JSON.stringify(foundFamily.creator))
 		return res
@@ -75,8 +76,11 @@ router.post("/patchfamily/:id", authOnlyMiddleware([]), async (req, res) => {
 
 //delete family
 router.post("/delete/:id", authOnlyMiddleware([]), async (req, res) => {
-	const familyFound = Family.findById(req.params.id).populate('creator');
+	console.log(req.params.id)
+	const familyFound = await Family.findById(req.params.id).populate('creator');
 	if (!familyFound) return res.status(400).json({ msg: "Family not found" });
+	console.log({user : req.auth.user, creator: familyFound.creator})
+	console.log({family : familyFound})
 	if (JSON.stringify(familyFound.creator) != JSON.stringify(req.auth.user))
 		return res
 			.status(400)
