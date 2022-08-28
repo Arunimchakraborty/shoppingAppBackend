@@ -60,4 +60,20 @@ router.post("/createlist/", authOnlyMiddleware([]), async (req, res) => {
 	}
 });
 
+//delete list by id
+router.post("/deletelist/:id", authOnlyMiddleware([]), async (req, res) => {
+	console.log("Delete req " + req.params.id);
+	const listFound = await List.findById(req.params.id).populate("creator");
+	if (!listFound) return res.status(404).json({ msg: "List  not found" });
+	console.log({ user: req.auth.user, creator: listFound.creator });
+	if (JSON.stringify(listFound.creator) != JSON.stringify(req.auth.user)) {
+		return res.status(400).json({ msg: "You must be creator of this list" });
+	}
+	try {
+		res.json(await List.deleteOne({ _id: req.params.id }));
+	} catch (error) {
+		res.status(500).json({ msg: "error deleting list from database" });
+	}
+});
+
 module.exports = router;

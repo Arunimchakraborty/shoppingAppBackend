@@ -45,6 +45,7 @@ router.post("/createFamily/", authOnlyMiddleware([]), async (req, res) => {
 	const newFamily = new Family({
 		name: name,
 		members: [req.auth.user, ...members],
+		creator: req.auth.user,
 	});
 	try {
 		return res.status(200).send(await newFamily.save());
@@ -58,12 +59,30 @@ router.post("/patchfamily/:id", authOnlyMiddleware([]), async (req, res) => {
 	const members = req.body.members;
 	if (!members)
 		return res.status(400).json({ msg: "Member not found in body" });
-	const foundFamily = await Family.findById(req.params.id);
+	const foundFamily = await Family.findById(req.params.id).populate("creator");
 	if (!foundFamily) return res.status(400).json({ msg: "Family not found" });
-	if(req.auth.user != foundFamily.creator) return res.status(400).json({msg : "You must be creator of the family to patch family"})
+	if (JSON.stringify(req.auth.user) != JSON.stringify(foundFamily.creator))
+		return res
+			.status(400)
+			.json({ msg: "You must be creator of the family to patch family" });
 	foundFamily.members = members;
 	try {
 		return res.status(200).send(await foundFamily.save());
+	} catch (error) {
+		return res.status(500).json({ msg: error });
+	}
+});
+
+//delete family
+router.post("/delete/:id", authOnlyMiddleware([]), async (req, res) => {
+	const familyFound = Family.findById(req.params.id).populate('creator');
+	if (!familyFound) return res.status(400).json({ msg: "Family not found" });
+	if (JSON.stringify(familyFound.creator) != JSON.stringify(req.auth.user))
+		return res
+			.status(400)
+			.json({ msg: "You must be creator of the family to delete it" });
+	try {
+		res.json(await Family.deleteOne({ _id: req.params.id }));
 	} catch (error) {
 		return res.status(500).json({ msg: error });
 	}
