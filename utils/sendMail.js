@@ -28,7 +28,7 @@ async function sendMail(to, subject, body) {
 		});
 
 		const mailOptions = {
-			from: credentials.email,
+			from: "admin@arunimchakraborty.co.in",
 			to: to,
 			subject: subject,
 			html: body,
