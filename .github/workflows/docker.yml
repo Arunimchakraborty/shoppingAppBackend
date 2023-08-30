@@ -15,12 +15,15 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Stop Container
+        continue-on-error: true
         run: sudo docker stop shopping_list_backend
 
       - name: Remove Container
+        continue-on-error: true
         run: sudo docker rm shopping_list_backend
 
       - name: Remove Image
+        continue-on-error: true
         run: sudo docker image rm shopping_list_backend
 
       - name: Compose Docker Image
