@@ -24,7 +24,7 @@ jobs:
 
       - name: Remove Image
         continue-on-error: true
-        run: sudo docker image rm shopping_list_backend
+        run: sudo docker image rm shoppingappbackend_app
 
       - name: Compose Docker Image
-        run: sudo docker-compose up
+        run: sudo docker-compose up -d
