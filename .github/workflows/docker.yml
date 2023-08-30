@@ -28,3 +28,6 @@ jobs:
 
       - name: Compose Docker Image
         run: sudo docker-compose up -d
+
+      - name: Connect to Docker Network
+        run: sudo docker network connect main shopping_list_backend
