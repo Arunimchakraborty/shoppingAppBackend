@@ -1,0 +1,30 @@
+name: Docker Build and Run
+on:
+  push:
+    tags:
+      - "shopping-backend"
+    branches:
+      - main
+
+jobs:
+  build-and-run:
+    runs-on: shopping-backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Stop Container
+        run: docker stop shopping_list_backend
+
+      - name: Remove Container
+        run: docker rm shopping_list_backend
+
+      - name: Remove Image
+        run: docker image rm shopping_list_backend
+
+      - name: Compose Docker Image
+        run: docker-compose up -d
+
+      - name: Connect to Docker Network
+        run: docker network connect main shopping_list_backend
