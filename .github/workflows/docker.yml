@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  build-and-run:
+  stop-existing:
     runs-on: shopping-backend
 
     steps:
@@ -24,10 +24,25 @@ jobs:
 
       - name: Remove Image
         continue-on-error: true
-        run: sudo docker image rm shoppingappbackend_app
+        run: sudo docker image rm shopping_list_backend
 
-      - name: Compose Docker Image
-        run: sudo docker-compose up -d
+  build-image:
+    runs-on: shopping-backend
 
-      - name: Connect to Docker Network
+    steps:
+      - name: Build Docker Image
+        run: sudo docker build -t shopping_list_backend .
+
+  run-image:
+    runs-on: shopping-backend
+
+    steps:
+
+      - name: Run Docker Container
+        run: sudo docker run -d --name=shopping_list_backend -p 7000:7000 shopping_list_backend
+
+      - name: Connect to Docker Network main
         run: sudo docker network connect main shopping_list_backend
+      
+      - name: Restart Docker container
+        run: sudo docker restart shopping_list_backend
