@@ -31,6 +31,7 @@ jobs:
 
   build-image:
     runs-on: shopping-backend
+    needs: stop-existing
 
     steps:
       - name: Build Docker Image
@@ -38,6 +39,7 @@ jobs:
 
   run-image:
     runs-on: shopping-backend
+    needs: [stop-existing, build-image]
 
     steps:
 
