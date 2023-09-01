@@ -11,8 +11,9 @@ jobs:
     runs-on: shopping-backend
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+
+      - name: Git pull
+        run: git pull
 
       - name: Stop Container
         continue-on-error: true
@@ -28,21 +29,30 @@ jobs:
 
   build-image:
     runs-on: shopping-backend
+    needs: stop-existing
 
     steps:
       - name: Build Docker Image
-        run: sudo docker build -t shopping_list_backend .
+        run: sudo docker build -t shopping_list_backend -f Dockerfile .
 
   run-image:
     runs-on: shopping-backend
+    needs: [stop-existing, build-image]
 
     steps:
-
       - name: Run Docker Container
         run: sudo docker run -d --name=shopping_list_backend -p 7000:7000 shopping_list_backend
 
       - name: Connect to Docker Network main
         run: sudo docker network connect main shopping_list_backend
-      
+
       - name: Restart Docker container
         run: sudo docker restart shopping_list_backend
+
+  test-build:
+    runs-on: shopping-backend
+    needs: [stop-existing, build-image, run-image]
+
+    steps:
+      - name: Test
+        run: curl https://shopping.arunimchakraborty.co.in
