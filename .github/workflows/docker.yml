@@ -65,8 +65,8 @@ jobs:
     steps:
       - name: Test
         run: |
-          status_code=$(curl -s -o /dev/null -w "%{http_code}" https://shopping.arunimchakraborty.co.in/)
-          if [ "$status_code" -eq 502 ]; then
+          response=$(curl https://shopping.arunimchakraborty.co.in/)
+          if [ "$response" -ne "Health is okay" ]; then
             echo "Bad Gateway 502 - Nginx"
             exit 1
           fi
