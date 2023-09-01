@@ -15,6 +15,9 @@ jobs:
       - name: Git pull
         run: git pull
 
+      - name: Git pull
+        run: git pull
+
       - name: Stop Container
         continue-on-error: true
         run: sudo docker stop shopping_list_backend

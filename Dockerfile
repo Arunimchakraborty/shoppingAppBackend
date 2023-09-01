@@ -8,6 +8,8 @@ ENV NODE_ENV=production=production
 
 COPY package*.json ./
 
+COPY .env ./
+
 RUN npm install
 
 COPY . .
