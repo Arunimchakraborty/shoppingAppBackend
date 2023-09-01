@@ -1,6 +1,4 @@
-FROM node:20.5.1-alpine
-
-RUN apk add --no-cache --virtual g++ make py3-pip
+FROM node
 
 WORKDIR /usr/src/app
 
@@ -11,8 +9,6 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-
-RUN apk del .gyp
 
 EXPOSE 7000
 
