@@ -35,7 +35,7 @@ jobs:
 
     steps:
       - name: Build Docker Image
-        run: sudo docker build -t shopping_list_backend -f .
+        run: sudo docker build -t shopping_list_backend -f Dockerfile .
 
   run-image:
     runs-on: shopping-backend
